@@ -609,7 +609,7 @@
         // Initialize Lucide Icons
         lucide.createIcons();
 
-        // System State
+        // System State (DISINKRONKAN DENGAN ROOT FIREBASE FILE .INO)
         const state = {
             voltage: 0.0,
             current: 0.0,
@@ -622,8 +622,8 @@
             relayState: false,
             overloadLimit: 5.0,
             lastUpdateAt: null,
-            espUrl: 'https://monitoring-listrik-82199-default-rtdb.asia-southeast1.firebasedatabase.app/monitoring.json',
-            vSwitchUrl: 'https://monitoring-listrik-82199-default-rtdb.asia-southeast1.firebasedatabase.app/monitoring/virtual_switch.json',
+            // Diperbarui agar langsung mengambil root database (.json) sesuai ESP32
+            espUrl: 'https://monitoring-listrik-82199-default-rtdb.asia-southeast1.firebasedatabase.app/.json',
             pollInterval: 1.0,
             tariffPerKWh: 1444.70,
             isConnected: null,
@@ -995,6 +995,7 @@
                         }
                     }
 
+                    // Sesuai key JSON dari file .ino (.energy, .overload_alert, .limit, dll)
                     state.voltage = data.voltage ?? 0.0;
                     state.current = data.current ?? 0.0;
                     state.power = data.power ?? (state.voltage * state.current * (data.pf ?? 0.95));
@@ -1063,7 +1064,8 @@
             state.overloadLimit = newLimit;
 
             try {
-                await fetch('https://monitoring-listrik-82199-default-rtdb.asia-southeast1.firebasedatabase.app/monitoring/limit.json', {
+                // Mengirim ke endpoint /limit.json sesuai dengan fungsi checkOverloadLimitFromCloud() di .ino
+                await fetch('https://monitoring-listrik-82199-default-rtdb.asia-southeast1.firebasedatabase.app/limit.json', {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(newLimit)
@@ -1114,7 +1116,8 @@
             state.energy = 0.00;
             if (state.isConnected) updateUI();
             try {
-                const resetEndpoint = 'https://monitoring-listrik-82199-default-rtdb.asia-southeast1.firebasedatabase.app/monitoring/reset.json';
+                // Endpoint untuk reset kWh
+                const resetEndpoint = 'https://monitoring-listrik-82199-default-rtdb.asia-southeast1.firebasedatabase.app/reset.json';
                 await fetch(resetEndpoint, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
